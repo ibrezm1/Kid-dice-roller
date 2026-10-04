@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kids TV Time Dice Roller 🎲 | Fun Screen Time Picker</title>
+  <meta name="description" content="A playful, interactive 3D dice roller designed for kids screen time and TV time. Fully customizable faces, built-in timer, sound effects, celebration confetti, and offline local storage support!">
+  <meta name="theme-color" content="#6366f1">
+  
+  <!-- Google Fonts: Fredoka & Outfit for ultra playful & modern aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+</head>
+<body>
+  <!-- Background animated blobs -->
+  <div class="bg-gradient-shapes" aria-hidden="true">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+  </div>
+
+  <!-- Particle / Confetti Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-badge">
+          <span class="logo-icon">📺</span>
+          <span class="logo-sparkle">✨</span>
+        </div>
+        <div class="header-titles">
+          <h1 class="app-title">Kids TV Time Dice Roller</h1>
+          <p class="app-subtitle">Roll the magic 3D die to decide your screen time fun!</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Preset Dropdown -->
+        <div class="preset-selector-wrapper">
+          <label for="presetSelect" class="sr-only">Preset Selection</label>
+          <div class="select-pill">
+            <span class="select-icon">🎯</span>
+            <select id="presetSelect" aria-label="Select Preset Theme">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button id="soundToggleBtn" class="icon-btn" title="Toggle Sound Effects" aria-label="Toggle Sound Effects">
+          <span id="soundIcon">🔊</span>
+        </button>
+
+        <!-- Speech / Voice Toggle -->
+        <button id="voiceToggleBtn" class="icon-btn active" title="Toggle Kid Voice Announcer" aria-label="Toggle Kid Voice Announcer">
+          <span id="voiceIcon">🗣️</span>
+        </button>
+
+        <!-- Customizer Settings Modal Trigger -->
+        <button id="openSettingsBtn" class="btn btn-secondary btn-icon-text" aria-label="Customize Dice Faces">
+          <span class="btn-icon">⚙️</span>
+          <span class="btn-text">Customize Faces</span>
+        </button>
+
+        <!-- Kid Lock Toggle -->
+        <button id="kidLockBtn" class="btn btn-lock" title="Lock Settings for Kids" aria-label="Kid Lock Mode">
+          <span id="kidLockIcon">🔓</span>
+          <span id="kidLockText" class="hide-mobile">Parent Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-stage">
+      <!-- Left side / Top: Quick Dice Face Legend & Presets -->
+      <aside class="dice-legend-panel glass-card">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span>🎲</span> Dice Faces Legend
+          </h2>
+          <span class="badge-pill" id="activePresetBadge">TV Screen Time</span>
+        </div>
+        
+        <div class="faces-grid" id="facesLegendGrid">
+          <!-- Dynamically populated cards for Face 1 to 6 -->
+        </div>
+
+        <div class="legend-footer">
+          <button id="quickEditBtn" class="link-btn">
+            <span>✏️ Edit values & rewards</span>
+          </button>
+          <button id="resetDefaultsBtn" class="link-btn danger-link">
+            <span>🔄 Reset to Default (2m, 5m, 10m, 20m, 30m, 1h)</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Center: 3D Dice Stage -->
+      <section class="dice-arena glass-card">
+        <!-- Result Ribbon / Banner -->
+        <div class="result-banner-container" id="resultBannerContainer">
+          <div class="result-badge" id="resultBadge">
+            <span class="result-sparkle">🎉</span>
+            <span class="result-text" id="resultText">Roll the dice to start!</span>
+            <span class="result-emoji" id="resultEmoji">✨</span>
+          </div>
+        </div>
+
+        <!-- 3D Dice Viewport -->
+        <div class="dice-viewport" id="diceViewport" tabindex="0" role="region" aria-label="Interactive 3D Dice. Click, swipe, or press Space to roll!">
+          <div class="dice-shadow" id="diceShadow"></div>
+          
+          <div class="dice-cube" id="diceCube">
+            <!-- Face 1 (Front) -->
+            <div class="dice-face face-1" data-face="1">
+              <div class="face-content">
+                <span class="face-pip-badge">1</span>
+                <span class="face-emoji">⚡</span>
+                <span class="face-label">2 Mins</span>
+                <span class="face-sub">Quick Peek</span>
+              </div>
+            </div>
+            <!-- Face 2 (Top) -->
+            <div class="dice-face face-2" data-face="2">
+              <div class="face-content">
+                <span class="face-pip-badge">2</span>
+                <span class="face-emoji">🍿</span>
+                <span class="face-label">5 Mins</span>
+                <span class="face-sub">Mini Clip</span>
+              </div>
+            </div>
+            <!-- Face 3 (Right) -->
+            <div class="dice-face face-3" data-face="3">
+              <div class="face-content">
+                <span class="face-pip-badge">3</span>
+                <span class="face-emoji">🎬</span>
+                <span class="face-label">10 Mins</span>
+                <span class="face-sub">Short Show</span>
+              </div>
+            </div>
+            <!-- Face 4 (Left) -->
+            <div class="dice-face face-4" data-face="4">
+              <div class="face-content">
+                <span class="face-pip-badge">4</span>
+                <span class="face-emoji">🚀</span>
+                <span class="face-label">20 Mins</span>
+                <span class="face-sub">Full Episode</span>
+              </div>
+            </div>
+            <!-- Face 5 (Bottom) -->
+            <div class="dice-face face-5" data-face="5">
+              <div class="face-content">
+                <span class="face-pip-badge">5</span>
+                <span class="face-emoji">🌟</span>
+                <span class="face-label">30 Mins</span>
+                <span class="face-sub">Feature Time</span>
+              </div>
+            </div>
+            <!-- Face 6 (Back) -->
+            <div class="dice-face face-6" data-face="6">
+              <div class="face-content">
+                <span class="face-pip-badge">6</span>
+                <span class="face-emoji">👑</span>
+                <span class="face-label">1 Hour</span>
+                <span class="face-sub">Mega Jackpot!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Throw instruction prompt -->
+          <div class="swipe-hint" id="swipeHint">
+            <span>👆 Tap or Swipe anywhere to Throw! 🎲</span>
+          </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="roll-controls">
+          <button id="rollDiceBtn" class="btn btn-huge btn-roll" aria-label="Throw the Dice">
+            <span class="btn-bounce-icon">🎲</span>
+            <span class="btn-glow"></span>
+            <span class="btn-roll-text">THROW DICE!</span>
+          </button>
+
+          <div class="quick-action-row">
+            <button id="startTimerBtn" class="btn btn-action btn-timer disabled" disabled title="Start Countdown Timer for this Roll">
+              <span>⏱️ Start Timer</span>
+            </button>
+            <button id="historyToggleBtn" class="btn btn-action" title="View Roll History">
+              <span>📜 Roll History (<span id="historyCount">0</span>)</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right side: TV Countdown Timer Widget -->
+      <aside class="timer-panel glass-card" id="timerPanel">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span>⏱️</span> Screen Time Timer
+          </h2>
+          <span class="status-indicator" id="timerStatusDot">Ready</span>
+        </div>
+
+        <div class="timer-display-card">
+          <!-- Circular Progress SVG -->
+          <div class="timer-circle-wrapper">
+            <svg class="timer-svg" viewBox="0 0 200 200">
+              <circle class="timer-circle-bg" cx="100" cy="100" r="85"></circle>
+              <circle class="timer-circle-progress" id="timerCircleProgress" cx="100" cy="100" r="85"></circle>
+            </svg>
+            <div class="timer-inner-content">
+              <span class="timer-digits" id="timerDigits">00:00</span>
+              <span class="timer-subtext" id="timerSubtext">Press Start Timer</span>
+            </div>
+          </div>
+
+          <!-- Timer Controls -->
+          <div class="timer-button-group">
+            <button id="timerPlayPauseBtn" class="btn btn-timer-ctrl btn-success" disabled>
+              <span id="playPauseIcon">▶️</span>
+              <span id="playPauseText">Start</span>
+            </button>
+            <button id="timerResetBtn" class="btn btn-timer-ctrl btn-warning" disabled>
+              <span>🔄</span> Reset
+            </button>
+          </div>
+
+          <!-- Quick adjustment pills -->
+          <div class="timer-adjust-row">
+            <button id="timerSub1Min" class="adjust-pill" disabled>-1m</button>
+            <button id="timerAdd1Min" class="adjust-pill" disabled>+1m</button>
+            <button id="timerAdd5Min" class="adjust-pill" disabled>+5m</button>
+          </div>
+        </div>
+
+        <!-- Fun Kid's TV Frame Graphic / Tip -->
+        <div class="kids-tip-box">
+          <span class="tip-icon">💡</span>
+          <p class="tip-text" id="funTipText">Parents Tip: When the timer rings, screen time is up! Have fun watching together! 🎉</p>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p>Built with ❤️ for happy kids & parents • 100% Client-Side • LocalStorage Powered • Hosted on GitHub Pages</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="github-link">
+            <span>📂 GitHub Repository</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- MODAL: Customize Dice Faces & Presets -->
+  <div class="modal-overlay" id="settingsModal" aria-hidden="true" role="dialog" aria-labelledby="settingsModalTitle">
+    <div class="modal-card glass-modal">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🎨</span>
+          <div>
+            <h3 id="settingsModalTitle" class="modal-title">Customize Dice Faces & Themes</h3>
+            <p class="modal-desc">Personalize all 6 faces with your own labels, minutes, emojis, and colors!</p>
+          </div>
+        </div>
+        <button id="closeSettingsBtn" class="modal-close-btn" aria-label="Close settings">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Preset Management Bar -->
+        <div class="preset-manager-box">
+          <div class="preset-manager-header">
+            <label class="section-label">Selected Theme Preset:</label>
+            <div class="preset-action-buttons">
+              <button id="saveAsNewPresetBtn" class="btn btn-xs btn-outline">💾 Save as New Preset</button>
+              <button id="deletePresetBtn" class="btn btn-xs btn-danger-outline" title="Delete current custom preset">🗑️ Delete</button>
+            </div>
+          </div>
+          <div class="preset-chips-container" id="presetChipsContainer">
+            <!-- Dynamically populated chips -->
+          </div>
+        </div>
+
+        <!-- 6 Faces Edit Form Grid -->
+        <div class="faces-form-grid" id="facesFormGrid">
+          <!-- Dynamically generated 6 editable face cards -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-footer-left">
+          <button id="restorePresetDefaultsBtn" class="btn btn-outline-danger">
+            <span>🔄 Reset to Standard TV Times</span>
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="cancelSettingsBtn" class="btn btn-secondary">Cancel</button>
+          <button id="saveFacesBtn" class="btn btn-primary">
+            <span>💾 Save & Apply Changes</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Roll History -->
+  <div class="modal-overlay" id="historyModal" aria-hidden="true" role="dialog" aria-labelledby="historyModalTitle">
+    <div class="modal-card glass-modal history-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📜</span>
+          <div>
+            <h3 id="historyModalTitle" class="modal-title">Roll History Log</h3>
+            <p class="modal-desc">Track previous dice rolls and screen time records.</p>
+          </div>
+        </div>
+        <button id="closeHistoryBtn" class="modal-close-btn" aria-label="Close History">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="history-list-wrapper" id="historyList">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="clearHistoryBtn" class="btn btn-outline-danger">
+          <span>🗑️ Clear History</span>
+        </button>
+        <button id="closeHistoryBottomBtn" class="btn btn-secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Kid-Lock PIN Dialog -->
+  <div class="modal-overlay" id="kidLockModal" aria-hidden="true" role="dialog" aria-labelledby="kidLockModalTitle">
+    <div class="modal-card glass-modal pin-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🔒</span>
+          <div>
+            <h3 id="kidLockModalTitle" class="modal-title">Parental Security Check</h3>
+            <p class="modal-desc" id="kidLockDesc">Solve the math puzzle to unlock parent settings:</p>
+          </div>
+        </div>
+        <button id="closeKidLockBtn" class="modal-close-btn" aria-label="Close">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="math-challenge-box">
+          <span class="math-problem" id="mathProblemText">7 × 8 = ?</span>
+          <input type="number" id="mathAnswerInput" class="math-input" placeholder="Answer" autofocus>
+          <p class="math-error" id="mathErrorText" style="display:none;">Oops! Try again.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="cancelKidLockBtn" class="btn btn-secondary">Cancel</button>
+        <button id="submitKidLockBtn" class="btn btn-primary">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/dice3d.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
