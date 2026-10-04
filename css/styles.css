@@ -1533,32 +1533,137 @@ body {
   font-weight: 600;
 }
 
-/* Mobile Responsiveness */
+/* Mobile Responsiveness & Touch Optimization */
 @media (max-width: 640px) {
   .app-container {
-    padding: 10px;
+    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    gap: 14px;
   }
   
   .app-header {
-    padding: 10px 14px;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .header-brand {
+    gap: 10px;
+  }
+
+  .logo-badge {
+    width: 42px;
+    height: 42px;
+    font-size: 22px;
   }
   
   .app-title {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
+  }
+
+  .app-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .header-actions {
+    gap: 6px;
+    width: 100%;
+    justify-content: space-between;
   }
   
+  .preset-selector-wrapper {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .select-pill {
+    padding: 4px 10px 4px 8px;
+    width: 100%;
+  }
+
+  .select-pill select {
+    width: 100%;
+    font-size: 0.85rem;
+  }
+
   .hide-mobile {
     display: none;
   }
   
   .btn-huge {
-    padding: 12px 32px;
-    font-size: 1.2rem;
+    padding: 14px 28px;
+    font-size: 1.15rem;
+    width: 100%;
+    max-width: 320px;
   }
-  
+
+  .faces-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .legend-card {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .legend-label {
+    font-size: 0.85rem;
+  }
+
+  .legend-sub {
+    font-size: 0.7rem;
+  }
+
+  .dice-arena {
+    min-height: 400px;
+    padding: 16px 10px;
+  }
+
+  .dice-viewport {
+    height: 230px;
+  }
+
+  .timer-circle-wrapper {
+    width: 160px;
+    height: 160px;
+  }
+
+  .timer-digits {
+    font-size: 1.85rem;
+  }
+
+  .modal-card {
+    max-height: 95vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-header, .modal-body, .modal-footer {
+    padding: 14px 16px;
+  }
+
+  .faces-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
   .faces-grid {
     grid-template-columns: 1fr;
   }
+
+  .btn-huge {
+    font-size: 1.05rem;
+    padding: 12px 20px;
+  }
+}
+
+/* Touch Action Polish */
+button, select, input, .preset-chip, .legend-card {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modal-body, .history-list-wrapper {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Accessibility helper */
